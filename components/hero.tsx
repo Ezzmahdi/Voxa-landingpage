@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import Image from "next/image"
 
 export function Hero() {
@@ -21,12 +22,19 @@ export function Hero() {
               </p>
 
               <div className="space-y-4">
-                <Button
-                  size="lg"
-                  className="h-14 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-lg hover:bg-primary/90"
-                >
-                  Join Waitlist
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-3 max-w-md">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="h-14 rounded-full px-6 text-base flex-1"
+                  />
+                  <Button
+                    size="lg"
+                    className="h-14 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-lg hover:bg-primary/90 sm:whitespace-nowrap"
+                  >
+                    Join Waitlist
+                  </Button>
+                </div>
                 <p className="text-sm text-muted-foreground">No credit card required</p>
               </div>
             </div>
