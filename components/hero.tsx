@@ -1,8 +1,61 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
+import { useState, useEffect } from "react"
 
 export function Hero() {
+  const [email, setEmail] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+
+  // Reset status message after 5 seconds
+  useEffect(() => {
+    if (submitStatus === "success" || submitStatus === "error") {
+      const timer = setTimeout(() => {
+        setSubmitStatus("idle")
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [submitStatus])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!email || !email.trim()) return
+    
+    setIsSubmitting(true)
+    setSubmitStatus("idle")
+    
+    try {
+      const response = await fetch("https://submit-form.com/1kjXnOKz2", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+        }),
+      })
+      
+      // Check if the response is successful (status 200-299)
+      if (response.ok) {
+        setSubmitStatus("success")
+        setEmail("") // Clear input only on success
+      } else {
+        console.error("Form submission failed:", response.status, response.statusText)
+        setSubmitStatus("error")
+      }
+    } catch (error) {
+      console.error("Form submission error:", error)
+      setSubmitStatus("error")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <>
       <div className="h-20" />
@@ -22,20 +75,42 @@ export function Hero() {
               </p>
 
               <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row gap-3 max-w-md">
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md">
                   <Input
                     type="email"
+                    name="email"
                     placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isSubmitting}
                     className="h-14 rounded-full px-6 text-base flex-1"
                   />
                   <Button
+                    type="submit"
                     size="lg"
-                    className="h-14 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-lg hover:bg-primary/90 sm:whitespace-nowrap"
+                    disabled={isSubmitting || !email}
+                    className="h-14 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-lg hover:bg-primary/90 sm:whitespace-nowrap disabled:opacity-50"
                   >
-                    Join Waitlist
+                    {isSubmitting ? "Joining..." : "Join Waitlist"}
                   </Button>
-                </div>
-                <p className="text-sm text-muted-foreground">No credit card required</p>
+                </form>
+                
+                {submitStatus === "success" && (
+                  <p className="text-sm text-green-600 font-medium">
+                    🎉 Thanks for joining! We'll be in touch soon.
+                  </p>
+                )}
+                
+                {submitStatus === "error" && (
+                  <p className="text-sm text-red-600 font-medium">
+                    Something went wrong. Please try again.
+                  </p>
+                )}
+                
+                {submitStatus === "idle" && (
+                  <p className="text-sm text-muted-foreground">No credit card required</p>
+                )}
               </div>
             </div>
 
