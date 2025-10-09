@@ -17,7 +17,12 @@ export const metadata: Metadata = {
   title: "Voxa - Turn Your Voice Into Polished Content",
   description:
     "Talk naturally about your ideas, and Voxa transforms them into engaging content written in your favorite creator's style.",
-    generator: 'v0.app'
+  generator: 'v0.app',
+  icons: {
+    icon: '/app-icon.png',
+    shortcut: '/app-icon.png',
+    apple: '/app-icon.png',
+  },
 }
 
 export default function RootLayout({
